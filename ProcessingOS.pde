@@ -9,6 +9,9 @@
   int WC_R = 25;
   int WB_S = 50;
   int WD_P = W_FY+pWM(WC_R,2); //From top border of window: Space, then circle, then Space.
+  
+  int dragX;
+  int dragY;
 
 void setup(){
   //init screen
@@ -19,33 +22,40 @@ void setup(){
   //Make always visible menu bar..
   //Make a coordinate grid here in another color..
   
-  
+  strokeWeight(1);
   noFill();
   //We don't have a finger on the screen at the beginning (middle of window menu):
   mouseX=W_TPX/2+W_FX/2;
   mouseY=(WD_P-W_FY)/2+W_FY;
-  point(mouseX, mouseY); //Maybe make a cross?
+  dragX=mouseX;
+  dragY=mouseY;
+  
   println(mouseX,mouseY);
   createWindow(mouseX,mouseY); //Create Window relative to mouse position
 }
 void draw(){
   
-  //line(mouseX, mouseY, pmouseX, pmouseY);
-  
-  stroke(204);
-  noFill();
-  createWindow(pmouseX,pmouseY);
-  stroke(0);
-  createWindow(mouseX,mouseY);
+
+  if(mouseX<dragX+50 && mouseX >dragX-50 && mouseY<dragY+50 && mouseY>dragY-50)
+  { 
+    stroke(204);
+    noFill();
+    strokeWeight(3);
+    createWindow(dragX,dragY);
+    stroke(0);
+    strokeWeight(1);
+    createWindow(mouseX,mouseY);
+  }
   
   
   //Close Circle touched
-  if(sq(pmouseX - (W_TPX-pWM(WC_R,1))) + sq(pmouseY - (W_FY+pWM(WC_R,1))) < WC_R*WC_R)
+  
+  if(sq(pmouseX - (dragX+W_FX+WC_R+pWM(WC_R,1))) + sq(pmouseY - (dragY+(WD_P-W_FY)/2-pWM(WC_R,1))) < WC_R*WC_R)
   {  
     println(pmouseX,pmouseY);
     stroke(255);
     noFill();
-    createWindow(pmouseX,pmouseY);
+    createWindow(dragX,dragY);
   }
   
 }
@@ -57,8 +67,14 @@ int pWM(int element, int num){
 
 void createWindow(int X, int Y)
 {
+  //Cross for dragging:
+  dragX=X;
+  dragY=Y;
+  line(X-WM_SP,Y,X+WM_SP,Y);
+  line(X,Y-WM_SP,X,Y+WM_SP);
+  
   rect(X-W_FX*2, Y-(WD_P-W_FY)/2, W_TX, W_TY); //Window
   line(X-W_FX*2, Y+(WD_P-W_FY)/2, X+W_FX*2, Y+(WD_P-W_FY)/2); //Divider between menu bar and window content
   ellipseMode(RADIUS);
-  ellipse(W_TPX-pWM(WC_R,1), W_FY+pWM(WC_R,1), WC_R, WC_R); //Close button
+  ellipse(X+W_FX+WC_R+pWM(WC_R,1), Y+(WD_P-W_FY)/2-pWM(WC_R,1), WC_R, WC_R); //Close button
 }
