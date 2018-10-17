@@ -21,41 +21,44 @@ void setup(){
   
   
   noFill();
-  //We don't have a finger on the screen at the beginning
-  mouseX=W_TPX/2;
-  //mouseY=;
-  createWindow(); //Create Window relative to mouse position
+  //We don't have a finger on the screen at the beginning (middle of window menu):
+  mouseX=W_TPX/2+W_FX/2;
+  mouseY=(WD_P-W_FY)/2+W_FY;
+  point(mouseX, mouseY); //Maybe make a cross?
+  println(mouseX,mouseY);
+  createWindow(mouseX,mouseY); //Create Window relative to mouse position
 }
 void draw(){
   
-  line(mouseX, mouseY, pmouseX, pmouseY);
+  //line(mouseX, mouseY, pmouseX, pmouseY);
+  
+  stroke(204);
+  noFill();
+  createWindow(pmouseX,pmouseY);
+  stroke(0);
+  createWindow(mouseX,mouseY);
   
   
   //Close Circle touched
-  if(sq(mouseX - (W_TPX-pWM(WC_R,1))) + sq(mouseY - (W_FY+pWM(WC_R,1))) < WC_R*WC_R)
+  if(sq(pmouseX - (W_TPX-pWM(WC_R,1))) + sq(pmouseY - (W_FY+pWM(WC_R,1))) < WC_R*WC_R)
   {  
-    println(mouseX,mouseY);
+    println(pmouseX,pmouseY);
     stroke(255);
     noFill();
-    createWindow();
+    createWindow(pmouseX,pmouseY);
   }
   
 }
 
 //Define position in Window Menu
 int pWM(int element, int num){
-  //Ignore (tenary operator was removed): 
-  //Would love to be able to use the bool as a operator replacement 
   return num*(element+WM_SP);
 }
 
-void createWindow()
+void createWindow(int X, int Y)
 {
-  rect(W_FX, W_FY, W_TX, W_TY); //Window
-  line(W_FX, WD_P, W_TPX, WD_P); //Divider between menu bar and window content
-  //ellipseMode(CORNER);
-  //ellipse(W_TPX-WC_R*2-WM_SP, W_FY+WM_SP, WC_R*2, WC_R*2); //Close button
+  rect(X-W_FX*2, Y-(WD_P-W_FY)/2, X+W_FX, Y+W_TY-(WD_P-W_FY)/2); //Window
+  line(X-W_FX*2, Y+(WD_P-W_FY)/2, X+W_FX*2, Y+(WD_P-W_FY)/2); //Divider between menu bar and window content
   ellipseMode(RADIUS);
-  //ellipse(W_TPX-WC_R-WM_SP, W_FY+pWM(WC_R,true,1), WC_R, WC_R); //Close button
   ellipse(W_TPX-pWM(WC_R,1), W_FY+pWM(WC_R,1), WC_R, WC_R); //Close button
 }
