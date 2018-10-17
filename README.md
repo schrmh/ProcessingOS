@@ -23,3 +23,10 @@ instance, so that two users can draw at the same time; first person can
 close it for both, second can only close the mirror)
 - Get inspired by clusters (use the resources of two devices)
 - Get lazy
+- Add size "slider" in menu bar to create different windows
+- Make it possible to scroll the desktop to x2 of screen size (fvwm 
+like)
+- Make a small view in the menu bar to be able to quickly see all 
+windows in a reduced size
+- Make an pop-out version of that in a bigger size and make it possible 
+to control windows that are on other screens (just like multimonman)
