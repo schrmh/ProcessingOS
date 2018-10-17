@@ -30,3 +30,9 @@ like)
 windows in a reduced size
 - Make an pop-out version of that in a bigger size and make it possible 
 to control windows that are on other screens (just like multimonman)
+- Group multiple Windows so that they can be moved together (maybe make 
+their title bar in the same colour)
+- Dock windows to boarder of other windows
+- Resize multiple windows at once (press special key & select them; 
+temporary same colour)
+- Read what I wrote a long time ago for more ideas..
