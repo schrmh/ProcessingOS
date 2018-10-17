@@ -1,5 +1,5 @@
   //Basic Window setup; W=WINDOW, F=FROM, T=TO
-  //M=Menu, D=Divider, C= Circle, P=Position, R=Radius, SP=Space, S=Size
+  //M=Menu, D=Divider, C=Circle, B=Button, P=Position, R=Radius, SP=Space, S=Size
   int W_FX = 100;
   int W_FY = 100;
   int W_TY = 400;
@@ -12,6 +12,8 @@
   
   int dragX;
   int dragY;
+  
+  boolean oncreate=false; //Prevent that thousands of Windows get drawed while on create
 
 void setup(){
   //init screen
@@ -32,10 +34,41 @@ void setup(){
   
   println(mouseX,mouseY);
   createWindow(mouseX,mouseY); //Create Window relative to mouse position
+  
 }
 void draw(){
+  //Redaw existing screen elements if mouse gets moved
+  if(pmouseY!=mouseY || pmouseX!=mouseX)
+  {
+    strokeWeight(1);
+    drawMenuBar();
+    if(dragX>-1 &&dragY>-1)createWindow(dragX,dragY);
+  }
+  
+  //Mouse cursor
+  strokeWeight(1);
+  stroke(0);
+  ellipseMode(RADIUS);
+  ellipse(mouseX, mouseY, WM_SP, WM_SP);
+  strokeWeight(3);
+  stroke(204);
+  ellipse(pmouseX, pmouseY, WM_SP, WM_SP);
   
 
+  //Window create button touched
+  if(pmouseX<pWM(W_FX,1) && pmouseX >WM_SP && pmouseY<pWM(WB_S,1) && pmouseY>WM_SP)
+  { 
+    
+    if (oncreate==false) 
+    {
+      oncreate=true;
+      createWindow(pmouseX,pmouseY); 
+    }
+    else oncreate=true;    
+  }
+  else oncreate=false;
+
+  //Window drag area touched
   if(mouseX<dragX+50 && mouseX >dragX-50 && mouseY<dragY+50 && mouseY>dragY-50)
   { 
     stroke(204);
@@ -47,15 +80,15 @@ void draw(){
     createWindow(mouseX,mouseY);
   }
   
-  
   //Close Circle touched
-  
   if(sq(pmouseX - (dragX+W_FX+WC_R+pWM(WC_R,1))) + sq(pmouseY - (dragY+(WD_P-W_FY)/2-pWM(WC_R,1))) < WC_R*WC_R)
   {  
     println(pmouseX,pmouseY);
-    stroke(255);
+    stroke(204);
     noFill();
     createWindow(dragX,dragY);
+    dragX=-1;
+    dragY=-1;
   }
   
 }
@@ -77,4 +110,11 @@ void createWindow(int X, int Y)
   line(X-W_FX*2, Y+(WD_P-W_FY)/2, X+W_FX*2, Y+(WD_P-W_FY)/2); //Divider between menu bar and window content
   ellipseMode(RADIUS);
   ellipse(X+W_FX+WC_R+pWM(WC_R,1), Y+(WD_P-W_FY)/2-pWM(WC_R,1), WC_R, WC_R); //Close button
+}
+
+void drawMenuBar()
+{
+  stroke(0);
+  line(0,pWM(WB_S/2,2),width,pWM(WB_S/2,2));
+  rect(WM_SP,WM_SP,W_FX,WB_S);
 }
