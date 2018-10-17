@@ -57,7 +57,7 @@ int pWM(int element, int num){
 
 void createWindow(int X, int Y)
 {
-  rect(X-W_FX*2, Y-(WD_P-W_FY)/2, X+W_FX, Y+W_TY-(WD_P-W_FY)/2); //Window
+  rect(X-W_FX*2, Y-(WD_P-W_FY)/2, W_TX, W_TY); //Window
   line(X-W_FX*2, Y+(WD_P-W_FY)/2, X+W_FX*2, Y+(WD_P-W_FY)/2); //Divider between menu bar and window content
   ellipseMode(RADIUS);
   ellipse(W_TPX-pWM(WC_R,1), W_FY+pWM(WC_R,1), WC_R, WC_R); //Close button
