@@ -45,3 +45,10 @@ two have the same colour display both in a small overlaying view like
 Android (they will be highlighted when pressed)
 - Add on-screen pop-out keyboard/shortcut/numpad for quick execution of 
 actions on Android
+- Add Font manager that allows special "handwritten"-like fonts (e.g. 
+when a char looks different at the end of a word than in the middle)
+- Modificator for a new font colour concept (e.g. rainbow and each lines 
+of pixel are different)
+- Add 1-bit XOR-cursor & an option to use XOR on a specific area and 
+32-bit on 
+the rest
