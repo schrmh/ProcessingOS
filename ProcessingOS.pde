@@ -1,3 +1,5 @@
+import java.util.ListIterator;  
+  
   //Basic Window setup; W=WINDOW, F=FROM, T=TO
   //M=Menu, D=Divider, C=Circle, B=Button, P=Position, R=Radius, SP=Space, S=Size
   int W_FX = 100;
@@ -10,8 +12,9 @@
   int WB_S = 50;
   int WD_P = W_FY+pWM(WC_R,2); //From top border of window: Space, then circle, then Space.
   
-  int dragX;
-  int dragY;
+  int i=0; //Windows index
+  ArrayList<Integer> dragX = new ArrayList<Integer>();
+  ArrayList<Integer> dragY = new ArrayList<Integer>();
   
   boolean oncreate=false; //Prevent that thousands of Windows get drawed while on create
 
@@ -29,20 +32,21 @@ void setup(){
   //We don't have a finger on the screen at the beginning (middle of window menu):
   mouseX=W_TPX/2+W_FX/2;
   mouseY=(WD_P-W_FY)/2+W_FY;
-  dragX=mouseX;
-  dragY=mouseY;
   
-  println(mouseX,mouseY);
-  createWindow(mouseX,mouseY); //Create Window relative to mouse position
+  dragX.add(mouseX);
+  dragY.add(mouseY);
+  
+  createWindow(mouseX,mouseY, i); //Create Window relative to mouse position
   
 }
 void draw(){
+  
   //Redaw existing screen elements if mouse gets moved
   if(pmouseY!=mouseY || pmouseX!=mouseX)
   {
     strokeWeight(1);
     drawMenuBar();
-    if(dragX>-1 &&dragY>-1)createWindow(dragX,dragY);
+    if(dragX.get(i)>-1 &&dragY.get(i)>-1)createWindow(dragX.get(i),dragY.get(i), i);
   }
   
   //Mouse cursor
@@ -62,33 +66,52 @@ void draw(){
     if (oncreate==false) 
     {
       oncreate=true;
-      createWindow(pmouseX,pmouseY); 
+      i++;
+      dragX.add(-1);
+      dragY.add(-1);
+      createWindow(pmouseX,pmouseY, i); 
     }
     else oncreate=true;    
   }
   else oncreate=false;
 
+  ListIterator<Integer> X = dragX.listIterator();
+  ListIterator<Integer> Y = dragY.listIterator();
+  int c=-1;
   //Window drag area touched
-  if(mouseX<dragX+50 && mouseX >dragX-50 && mouseY<dragY+50 && mouseY>dragY-50)
-  { 
-    stroke(204);
-    noFill();
-    strokeWeight(3);
-    createWindow(dragX,dragY);
-    stroke(0);
-    strokeWeight(1);
-    createWindow(mouseX,mouseY);
+  while(X.hasNext())
+  {
+    int xp = X.next();
+    if(mouseX<xp+50 && mouseX >xp-50)
+    { 
+      while(Y.hasNext())
+      {
+        c++;
+        int yp = Y.next();
+        if(mouseY<yp+50 && mouseY>yp-50)
+        {
+          stroke(204);
+          noFill();
+          strokeWeight(3);
+          createWindow(xp,yp, i);
+          stroke(0);
+          strokeWeight(1);
+          createWindow(mouseX,mouseY, c);
+        }
+      }
+    }
   }
   
+  
   //Close Circle touched
-  if(sq(pmouseX - (dragX+W_FX+WC_R+pWM(WC_R,1))) + sq(pmouseY - (dragY+(WD_P-W_FY)/2-pWM(WC_R,1))) < WC_R*WC_R)
+  if(sq(pmouseX - (dragX.get(i)+W_FX+WC_R+pWM(WC_R,1))) + sq(pmouseY - (dragY.get(i)+(WD_P-W_FY)/2-pWM(WC_R,1))) < WC_R*WC_R)
   {  
     println(pmouseX,pmouseY);
     stroke(204);
     noFill();
-    createWindow(dragX,dragY);
-    dragX=-1;
-    dragY=-1;
+    createWindow(dragX.get(i),dragY.get(i), i);
+    dragX.set(i,-1);
+    dragY.set(i,-1);
   }
   
 }
@@ -98,11 +121,12 @@ int pWM(int element, int num){
   return num*(element+WM_SP);
 }
 
-void createWindow(int X, int Y)
+void createWindow(int X, int Y, int index)
 {
+  println("Total number of windows:"+dragX.size());
   //Cross for dragging:
-  dragX=X;
-  dragY=Y;
+  dragX.set(index,X);
+  dragY.set(index,Y);
   line(X-WM_SP,Y,X+WM_SP,Y);
   line(X,Y-WM_SP,X,Y+WM_SP);
   
