@@ -36,3 +36,12 @@ their title bar in the same colour)
 - Resize multiple windows at once (press special key & select them; 
 temporary same colour)
 - Read what I wrote a long time ago for more ideas..
+- Different layers (foreground/background)
+- If multiple windows are overlaying make a quick select way to bring 
+the wanted window to foreground (e.g. select colour of title bar and if 
+two have the same colour display both in a small overlaying view like 
+(alt+tab) 
+- Add common keys to global menu so that users can easily press keys on 
+Android (they will be highlighted when pressed)
+- Add on-screen pop-out keyboard/shortcut/numpad for quick execution of 
+actions on Android
