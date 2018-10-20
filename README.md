@@ -52,3 +52,4 @@ of pixel are different)
 - Add 1-bit XOR-cursor & an option to use XOR on a specific area and 
 32-bit on 
 the rest
+- Something with folders
