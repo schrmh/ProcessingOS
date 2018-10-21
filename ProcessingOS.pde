@@ -16,8 +16,18 @@ void setup()
   
   Hit h1 = new Hit(random(width)/1.5,random(height)/1.5,(int)random(width/10,width/6),(int)random(height/32,height/16));
   Hit h2 = new Hit(random(width)/1.5,random(height)/1.5,(int)random(width/10,width/6),(int)random(height/32,height/16));
+  
+  //Alternatively: Same as windows but extremly stretched and .equals with name so that close circle don't show and title bar is is acts like a start button..:
+  Menu m1 =  new Menu(10,10,width-10,50); 
+  Menu m2 = new Menu(random(width)/1.5,random(height)/1.5,(int)random(width/10,width/6),(int)random(height/32,height/16));
+  
+  //
+  
   myQueries.add(h1 );
   myQueries.add(h2 );
+  myQueries.add(m1 ); 
+  myQueries.add(m2 );
+  
 }
  
 void draw()
@@ -26,6 +36,9 @@ void draw()
   
   for(int i = 0; i < myQueries.size(); i++){
     abstractSearchObject myQuery1 = (abstractSearchObject)myQueries.get(i);
+    if(myQuery1 instanceof Menu) //dirty cheater to prevent this from being a window
+    myQuery1.displayMenu();
+    else
     myQuery1.display();
   }
 }
@@ -52,11 +65,23 @@ void mouseDragged(){
 
 
 void evaluateQuerySelection(abstractSearchObject myQuery1){
-  if (myQuery1.inQuery(mouseX, mouseY) & queryBeingDragged==null){ 
+  if(myQuery1 instanceof Menu)
+  {
+    if (myQuery1.inQueryMenu(mouseX, mouseY) & queryBeingDragged==null){ 
+    dragX = (int)myQuery1.qx - mouseX;
+    dragY = (int)myQuery1.qy - mouseY;
+    queryBeingDragged = myQuery1;
+    println("Menu bar");
+    }
+  }
+  else
+  {
+    if (myQuery1.inQuery(mouseX, mouseY) & queryBeingDragged==null){ 
     dragX = (int)myQuery1.qx - mouseX;
     dragY = (int)myQuery1.qy - mouseY;
     queryBeingDragged = myQuery1;
     println("Title bar");
+    }
   }
 }
 
@@ -136,10 +161,40 @@ abstract class abstractSearchObject{
     return false;
   }
   
+  boolean inQueryMenu(int x, int y){ //Mouse clicked on Menu?
+    /*println("x"+x+" y"+y);
+    println("qx"+(int)qx+" qy"+(int)qy);
+    println("dQx"+(int)dQx+" dQy"+(int)dQy);
+    if((x > qx) & x < (dQx)){
+      println(true);
+      if((y < qy || y < qy*-1)  & y > (dQy)){ //reverse to coordinate system since dQy < qy in println
+        println(" YES");
+        return true;
+      }
+    }
+    println(" NO");*/
+    return false; //maybe change rect mode back to radius..
+  }
+  
   void moveByMouseCoord(int mausX, int mausY){
     this.qx = mausX + dragX;
     this.qy = mausY + dragY;
   }
+  
+    void displayMenu() {
+      // Create the shape group
+      window = createShape(GROUP);
+      rectMode(CORNERS);
+      content = createShape(RECT,qx,qy,dQx,dQy); //Window content
+      divider = createShape(RECT,qx+2,qy+2,qx+dQy*2,dQy-2); //start menu to create windows, may rename
+      
+      // Add the "child" shapes to the parent group
+      window.addChild(content); //vertex for splitting feature and better coordinates than rect?
+      window.addChild(divider); //replace with vertex?
+      
+      stroke(0);
+      shape(window);
+    }
 }
 
 class Hit extends abstractSearchObject{
@@ -147,4 +202,13 @@ class Hit extends abstractSearchObject{
   Hit(float tempQx, float tempQy,int tempdQx, int tempdQy) {
     super(tempQx,  tempQy, tempdQx,  tempdQy);
   }
+}
+
+//Maybe a mode where start button draws HitLinks to each window..
+class Menu extends abstractSearchObject{ 
+  
+  Menu(float tempQx, float tempQy,int tempdQx, int tempdQy) {
+    super(tempQx,  tempQy, tempdQx,  tempdQy);
+  }
+  
 }
