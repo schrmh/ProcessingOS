@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-ArrayList myQueries; //D 
+ArrayList myQueries;
 PShape window, border, dragpoint, divider, close, content;
 
 abstractSearchObject queryBeingDragged;
@@ -11,11 +11,13 @@ int dragY;
 void setup()
 {
   queryBeingDragged = null;
-  myQueries = new ArrayList(); //D 
+  myQueries = new ArrayList();
   size(800, 500);
   
-  Hit h1 = new Hit(width/2.0+100,height/5.0+50,100,20);
+  Hit h1 = new Hit(random(width)/1.5,random(height)/1.5,(int)random(width/10,width/6),(int)random(height/32,height/16));
+  Hit h2 = new Hit(random(width)/1.5,random(height)/1.5,(int)random(width/10,width/6),(int)random(height/32,height/16));
   myQueries.add(h1 );
+  myQueries.add(h2 );
 }
  
 void draw()
@@ -33,7 +35,8 @@ void mousePressed(){
   for(int i = 0; i < myQueries.size(); i++){ 
      // note how I made it generic 
     abstractSearchObject myQuery1 = (abstractSearchObject)myQueries.get(i);
-    evaluateQuerySelection(myQuery1);
+    evaluateQuerySelectionClose(myQuery1); //close button. Does kind of myQueries.remove(myQuery1);
+    evaluateQuerySelection(myQuery1); //title bar
   }
 }
 
@@ -48,11 +51,19 @@ void mouseDragged(){
 }  
 
 
-void evaluateQuerySelection(abstractSearchObject myQuery1){ 
+void evaluateQuerySelection(abstractSearchObject myQuery1){
   if (myQuery1.inQuery(mouseX, mouseY) & queryBeingDragged==null){ 
     dragX = (int)myQuery1.qx - mouseX;
     dragY = (int)myQuery1.qy - mouseY;
     queryBeingDragged = myQuery1;
+    println("Title bar");
+  }
+}
+
+void evaluateQuerySelectionClose(abstractSearchObject close){ 
+  if (close.inQueryClose(mouseX, mouseY) & queryBeingDragged==null){ 
+    myQueries.remove(close); //remove Window from ArrayList
+    println("Close button");
   }
 }
 
@@ -63,25 +74,27 @@ abstract class abstractSearchObject{
   float qy;
   int dQy;
   int dQx;
+  int cRad=25; //WC_R
+  //Y-Multiplicator:
+  int yma=5;
+  int ymb=4;
  
   abstractSearchObject(float tempQx, float tempQy,int tempdQx, int tempdQy) {
     qx= tempQx; //W_FX
-     qy = tempQy; //W_FY
-     dQx = tempdQx; //W_TX
-     dQy = tempdQy; //W_TY
-     
-  
+    qy = tempQy; //W_FY
+    dQx = tempdQx; //W_TX
+    dQy = tempdQy; //W_TY
   }
  
   void display() {
     // Create the shape group
     window = createShape(GROUP);
     rectMode(RADIUS);
-    content = createShape(RECT,qx,qy+dQy*5,dQx,dQy*4); //Window content
+    content = createShape(RECT,qx,qy+dQy*yma,dQx,dQy*ymb); //Window content
     //border = createShape(RECT,qx,qy,dQx,dQy*4); //Window //maybe freeze window mode, lol
     divider = createShape(RECT, qx,qy,dQx,dQy); //title bar above window content
     ellipseMode(RADIUS);
-    close = createShape(ELLIPSE, qx+dQx,qy,25,25); //Close button
+    close = createShape(ELLIPSE, qx+dQx,qy, cRad,cRad); //Close button
     dragpoint = createShape();
     
     // Add the "child" shapes to the parent group
@@ -92,17 +105,34 @@ abstract class abstractSearchObject{
     
     stroke(0);
     shape(window);
-    
-    
   }
   
-  boolean inQuery(int x, int y){ //Move if mouse dragged on position of title bar element in query
+  boolean inQuery(int x, int y){ //Mouse clicked on title bar?
+    /*print(x + " " + y);
+    println(" is on title bar?");
+    println("> x: "+ (int)(qx-dQx)+ " y: " + (int)(qy-dQy));
+    println("< x: "+ (int)(qx+dQx)+ " y: " + (int)(qy+dQy));*/
     if((x > qx-dQx) & x < (qx+dQx)){
-  if((y > qy-dQy)  & y < (qy+dQy)){
-    
-    return true;
-  }
+      if((y > qy-dQy)  & y < (qy+dQy)){
+        //println(" YES");
+        return true;
+      }
     }
+    //println(" NO");
+    return false;
+  }
+  
+  boolean inQueryClose(int x, int y){ //Mouse clicked on close button?
+    //println(x + " " + y);
+    //println((int)qx+dQx + " " + (int)qy);
+    //print(" is on close?");
+    if(sq(x - (qx+dQx)) + sq(y - qy) < cRad*cRad) //TODO: change 25 to circle close button size or replace with vertex, lol
+    {
+        //println(" YES");
+        return true;
+    }
+    //qx+dQx,qy,25,25
+    //println(" NO");
     return false;
   }
   
